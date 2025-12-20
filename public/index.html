@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web SSH Console - ssh.analysisdata.net</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #header {
+            background: rgba(15, 15, 35, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        #auth-form {
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        #auth-form input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px 15px;
+            color: #e0e0e0;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        #auth-form input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        }
+
+        #auth-form input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 25px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #status-message {
+            color: #00d4ff;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 15px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 6px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        #file-upload-form {
+            padding: 15px 20px;
+            background: rgba(25, 25, 45, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: none;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        #upload-file-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 8px 15px;
+            color: #e0e0e0;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #upload-file-input:hover {
+            border-color: #00d4ff;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        #upload-status {
+            color: #ffd700;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 6px 12px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        #terminal-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            padding-bottom: 50px;
+        }
+
+        #terminal {
+            flex: 1;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            overflow: auto;
+        }
+
+        .xterm {
+            height: 100% !important;
+            padding: 10px;
+            min-height: 500px;
+        }
+
+        .xterm-viewport {
+            overflow-y: auto !important;
+            background: transparent !important;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.05);
+            max-height: calc(100vh - 200px);
+        }
+
+        .xterm-screen {
+            background: transparent !important;
+        }
+
+        .xterm-viewport::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .xterm-viewport::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+        }
+
+        .xterm-viewport::-webkit-scrollbar-thumb {
+            background: rgba(0, 212, 255, 0.3);
+            border-radius: 6px;
+            border: 2px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .xterm-viewport::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 212, 255, 0.5);
+        }
+
+        .xterm-viewport::-webkit-scrollbar-thumb:active {
+            background: rgba(0, 212, 255, 0.7);
+        }
+
+        @media (max-width: 768px) {
+            #auth-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            #auth-form input,
+            button {
+                width: 100%;
+            }
+        }
+
+        .glow-effect {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 5px rgba(0, 212, 255, 0.5);
+            }
+            to {
+                box-shadow: 0 0 20px rgba(0, 212, 255, 0.8);
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #00d4ff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <div id="auth-form">
+            <input type="text" id="ssh-host" placeholder="ホスト (例: 192.168.1.1)" required>
+            <input type="number" id="ssh-port" placeholder="ポート" value="22" required>
+            <input type="text" id="ssh-user" placeholder="ユーザー名" required>
+            <input type="password" id="ssh-pass" placeholder="パスワード" required>
+            <button onclick="connectSSH()">接続</button>
+            <span id="status-message">未接続</span>
+        </div>
+
+        <div id="file-upload-form">
+            <input type="file" id="upload-file-input">
+            <button onclick="startUpload()">ファイルをアップロード</button>
+            <span id="upload-status"></span>
+        </div>
+    </div>
+
+    <div id="terminal-container">
+        <div id="terminal"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
+    <script>
+        const host = window.location.host;
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const socket = new WebSocket(`${protocol}//${host}/`);
+        
+        const term = new Terminal({
+            cursorBlink: true,
+            scrollback: 10000,
+            theme: {
+                background: 'transparent',
+                foreground: '#00ff00',
+                cursor: '#00d4ff',
+                cursorAccent: '#000000',
+                black: '#000000',
+                red: '#ff6b6b',
+                green: '#51cf66',
+                yellow: '#ffd93d',
+                blue: '#4dabf7',
+                magenta: '#cc5de8',
+                cyan: '#22b8cf',
+                white: '#e0e0e0',
+                brightBlack: '#666666',
+                brightRed: '#ff8787',
+                brightGreen: '#69db7c',
+                brightYellow: '#ffe066',
+                brightBlue: '#74c0fc',
+                brightMagenta: '#da77f2',
+                brightCyan: '#3bc9db',
+                brightWhite: '#ffffff'
+            },
+            fontSize: 14,
+            fontFamily: 'Consolas, "Courier New", monospace',
+            lineHeight: 1.2,
+            convertEol: true,
+            disableStdin: false,
+            cursorStyle: 'block'
+        });
+    
+        const terminalElement = document.getElementById('terminal');
+        const statusElement = document.getElementById('status-message');
+        const fileUploadForm = document.getElementById('file-upload-form');
+
+        let currentSessionToken = null;
+
+        term.open(terminalElement);
+
+        function fitTerminal() {
+            const container = document.getElementById('terminal-container');
+            const cols = Math.floor(container.clientWidth / 9);
+            const rows = Math.floor(container.clientHeight / 17);
+            term.resize(cols, rows);
+            term.scrollToBottom();
+        }
+        
+        fitTerminal();
+        
+        term.onResize((size) => {
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({ 
+                    type: 'resize', 
+                    cols: size.cols, 
+                    rows: size.rows 
+                }));
+            }
+        });
+    
+        term.onData((data) => {
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({ 
+                    type: 'command', 
+                    input: data 
+                }));
+            }
+        });
+        
+        socket.onmessage = (event) => {
+            const data = event.data;
+            try {
+                const json = JSON.parse(data);
+                if (json.type === 'status') {
+                    statusElement.textContent = json.message;
+                    if (json.message.includes('成功')) {
+                        currentSessionToken = json.token;
+                        document.getElementById('auth-form').style.display = 'none';
+                        fileUploadForm.style.display = 'flex';
+                        statusElement.classList.add('glow-effect');
+                    }
+                }
+            } catch (e) {
+                term.write(data);
+            }
+        };
+    
+        socket.onopen = () => {
+            statusElement.textContent = 'サーバーと接続済み。SSH接続情報を入力してください。';
+        };
+    
+        socket.onclose = () => {
+            statusElement.textContent = 'サーバーとの接続が切れました。';
+            statusElement.classList.remove('glow-effect');
+            fileUploadForm.style.display = 'none';
+            currentSessionToken = null;
+        };
+    
+        function connectSSH() {
+            const host = document.getElementById('ssh-host').value;
+            const port = parseInt(document.getElementById('ssh-port').value);
+            const user = document.getElementById('ssh-user').value;
+            const pass = document.getElementById('ssh-pass').value;
+    
+            if (!host || !user || !pass) {
+                statusElement.textContent = 'すべてのフィールドを入力してください。';
+                return;
+            }
+
+            if (socket.readyState === WebSocket.OPEN) {
+                statusElement.innerHTML = 'SSH接続中... <span class="loading"></span>';
+                socket.send(JSON.stringify({
+                    type: 'auth',
+                    host: host,
+                    port: port,
+                    username: user,
+                    password: pass
+                }));
+            } else {
+                statusElement.textContent = 'WebSocket接続が確立されていません。';
+            }
+        }
+
+        function startUpload() {
+            const fileInput = document.getElementById('upload-file-input');
+            const file = fileInput.files[0];
+            const uploadStatus = document.getElementById('upload-status');
+    
+            if (!file) {
+                uploadStatus.textContent = 'ファイルを選択してください。';
+                return;
+            }
+
+            if (!currentSessionToken) {
+                uploadStatus.textContent = 'SSHに接続してください。';
+                return;
+            }
+
+
+            const formData = new FormData();
+            formData.append('upload_file', file);
+            formData.append('session_token', currentSessionToken);
+
+            uploadStatus.innerHTML = `アップロード中 (${file.name})... <span class="loading"></span>`;
+
+            const uploadUrl = `${window.location.protocol}//${window.location.host}/upload`;
+
+            fetch(uploadUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json();
+                } else {
+                    return response.text().then(text => {
+                        throw new Error(`サーバーエラー (HTTP ${response.status}): ${text.substring(0, 200)}`);
+                    });
+                }
+            })
+            .then(data => {
+                uploadStatus.textContent = data.message || 'アップロード完了';
+                uploadStatus.style.color = data.success ? '#51cf66' : '#ff6b6b';
+                if (data.success) {
+                    fileInput.value = '';
+                }
+            })
+            .catch(error => {
+                uploadStatus.textContent = `エラー: ${error.message}`;
+                uploadStatus.style.color = '#ff6b6b';
+            });
+        }
+
+        window.connectSSH = connectSSH;
+        window.startUpload = startUpload;
+
+        window.addEventListener('resize', () => {
+            fitTerminal();
+        });
+    </script>
+</body>
+</html>

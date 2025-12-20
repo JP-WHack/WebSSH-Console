@@ -1,0 +1,26 @@
+{
+  "name": "webssh-console",
+  "version": "1.0.0",
+  "description": "Web SSH Console with file upload support - localhost.run compatible",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "tunnel": "./start.sh"
+  },
+  "keywords": [
+    "ssh",
+    "webssh",
+    "terminal",
+    "xterm",
+    "sftp"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1",
+    "ssh2": "^1.14.0",
+    "ws": "^8.14.2"
+  }
+}
