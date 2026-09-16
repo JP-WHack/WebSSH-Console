@@ -1,22 +1,28 @@
+<div align="center">
+
 # WebSSH Console
 
-**ブラウザで動作するSSHターミナル - ファイルアップロード機能付き**
+**ブラウザで動作する SSH ターミナル - ファイルアップロード機能付き**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-ff6b6b.svg?style=for-the-badge)](LICENSE)
-[![Node.js](https://img.shields.io/badge/Node.js-16%2B-51cf66?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![SSH](https://img.shields.io/badge/SSH-Terminal-2d3748?style=for-the-badge)](https://www.openssh.com/)
+![Node.js](https://img.shields.io/badge/Node.js-16+-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![SSH](https://img.shields.io/badge/SSH-Terminal-2D3748?style=for-the-badge&logo=openssh&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-3DA639?style=for-the-badge)
 
-**ブラウザから任意のサーバーにSSH接続 - 追加ソフトウェア不要**
+</div>
 
 ---
 
-## 概要
+## 📖 概要
 
-WebSSH Consoleは、Webブラウザから直接SSH接続を可能にする軽量なアプリケーションです。ターミナルエミュレーター不要で、どこからでもサーバー管理が可能になります。
+WebSSH Console は、Web ブラウザから直接 SSH 接続を可能にする軽量なアプリケーションです。ターミナルエミュレーター不要で、どこからでもサーバー管理が可能になります。追加ソフトウェアは一切必要ありません。
+
+---
+
+## 🏗️ アーキテクチャ
 
 ```
 ┌─────────────────────────────┐
-│  Webブラウザ                 │
+│  Web ブラウザ                │
 │  (Chrome/Firefox/Safari)    │
 └──────────────┬──────────────┘
                │
@@ -30,28 +36,34 @@ WebSSH Consoleは、Webブラウザから直接SSH接続を可能にする軽量
                │  SSH
                ▼
 ┌─────────────────────────────┐
-│  リモートサーバー             │
+│  リモートサーバー            │
 │  (Linux/Unix)               │
 └─────────────────────────────┘
 ```
 
-## 機能
+---
+
+## ✨ 主な機能
 
 * **ブラウザベース** - 追加ソフトウェア不要、どこからでもアクセス
-* **リアルタイム接続** - WebSocketによる低遅延SSH接続
+* **リアルタイム接続** - WebSocket による低遅延 SSH 接続
 * **ファイルアップロード** - ブラウザから直接ファイルをサーバーに転送
-* **フルカラー対応** - xterm.jsによる完全なターミナルエミュレーション
-* **セッション管理** - 複数のSSH接続を同時管理
-* **localhost.run対応** - 簡単にインターネット公開可能
-* **レスポンシブUI** - モバイル・デスクトップ両対応
+* **フルカラー対応** - xterm.js による完全なターミナルエミュレーション
+* **セッション管理** - 複数の SSH 接続を同時管理
+* **localhost.run 対応** - 簡単にインターネット公開可能
+* **レスポンシブ UI** - モバイル・デスクトップ両対応
 
-## 必要要件
+---
 
-* Node.js 16以上
+## 📋 システム要件
+
+* Node.js 16 以上
 * npm または yarn
-* インターネット接続（CDNリソース取得用）
+* インターネット接続（CDN リソース取得用）
 
-## セットアップ手順
+---
+
+## 🚀 セットアップ
 
 ### 1. リポジトリのクローン
 
@@ -67,9 +79,10 @@ npm install
 ```
 
 インストールされるパッケージ:
-* `express` - Webサーバーフレームワーク
-* `ws` - WebSocket実装
-* `ssh2` - SSH2プロトコルクライアント
+
+* `express` - Web サーバーフレームワーク
+* `ws` - WebSocket 実装
+* `ssh2` - SSH2 プロトコルクライアント
 * `multer` - ファイルアップロード処理
 
 ### 3. サーバーの起動
@@ -101,27 +114,30 @@ ssh -R 80:localhost:3002 nokey@localhost.run
 http://localhost:3002
 ```
 
-## 使い方
+---
 
-### 基本的なSSH接続
+## 💻 使用方法
+
+### 基本的な SSH 接続
 
 1. ブラウザで `http://localhost:3002` を開く
 2. 以下の情報を入力:
-   * **ホスト**: サーバーのIPアドレスまたはホスト名
-   * **ポート**: SSHポート（デフォルト: 22）
-   * **ユーザー名**: SSHユーザー名
+   * **ホスト**: サーバーの IP アドレスまたはホスト名
+   * **ポート**: SSH ポート（デフォルト: 22）
+   * **ユーザー名**: SSH ユーザー名
    * **パスワード**: パスワード
 3. 「接続」ボタンをクリック
 
 ### ファイルアップロード
 
-SSH接続が確立されると、ファイルアップロードフォームが表示されます:
+SSH 接続が確立されると、ファイルアップロードフォームが表示されます:
 
 1. 「ファイルを選択」ボタンをクリック
 2. アップロードしたいファイルを選択
 3. 「ファイルをアップロード」ボタンをクリック
 
 **アップロード先:**
+
 * デフォルト: ユーザーのホームディレクトリ
 * フォールバック: `/tmp` ディレクトリ
 
@@ -130,12 +146,14 @@ SSH接続が確立されると、ファイルアップロードフォームが�
 | キー | 機能 |
 |------|------|
 | `Ctrl + C` | プロセス中断 |
-| `Ctrl + D` | EOF送信 |
+| `Ctrl + D` | EOF 送信 |
 | `Ctrl + L` | 画面クリア |
 | `Tab` | コマンド補完 |
 | `↑/↓` | コマンド履歴 |
 
-## localhost.runで公開
+---
+
+## 🚇 localhost.run で公開
 
 ### 方法1: 手動起動
 
@@ -145,9 +163,9 @@ SSH接続が確立されると、ファイルアップロードフォームが�
 ssh -R 80:localhost:3002 nokey@localhost.run
 ```
 
-表示されたURLでどこからでもアクセス可能になります。
+表示された URL でどこからでもアクセス可能になります。
 
-### 方法2: start.shスクリプト使用
+### 方法2: start.sh スクリプト使用
 
 ```bash
 chmod +x start.sh
@@ -155,9 +173,10 @@ chmod +x start.sh
 ```
 
 このスクリプトは:
+
 1. 依存パッケージを自動インストール
 2. サーバーをバックグラウンド起動
-3. localhost.runトンネルを確立
+3. localhost.run トンネルを確立
 
 または:
 
@@ -165,7 +184,9 @@ chmod +x start.sh
 npm run tunnel
 ```
 
-## 設定
+---
+
+## ⚙️ 設定
 
 ### ポート番号の変更
 
@@ -185,9 +206,9 @@ PORT=8080
 
 本番環境では以下の対策を推奨:
 
-#### 1. HTTPS化
+#### 1. HTTPS 化
 
-Nginxをリバースプロキシとして使用:
+Nginx をリバースプロキシとして使用:
 
 ```nginx
 server {
@@ -212,11 +233,11 @@ server {
 
 #### 2. 認証機能の追加
 
-Express-sessionとPassportを使用した認証を追加することを推奨します。
+Express-session と Passport を使用した認証を追加することを推奨します。
 
 #### 3. レート制限
 
-express-rate-limitで接続試行回数を制限:
+express-rate-limit で接続試行回数を制限:
 
 ```bash
 npm install express-rate-limit
@@ -233,15 +254,17 @@ const limiter = rateLimit({
 app.use(limiter);
 ```
 
-## トラブルシューティング
+---
+
+## 🔍 トラブルシューティング
 
 ### よくある問題
 
 | 問題 | 対処 |
 |------|------|
-| WebSocketが接続できない | ファイアウォール・プロキシ設定を確認 |
+| WebSocket が接続できない | ファイアウォール・プロキシ設定を確認 |
 | ファイルアップロードが失敗する | サーバーの書き込み権限を確認 |
-| 日本語が文字化けする | ターミナルの文字コードをUTF-8に設定 |
+| 日本語が文字化けする | ターミナルの文字コードを UTF-8 に設定 |
 
 ### 詳細なデバッグ
 
@@ -252,8 +275,9 @@ node server.js
 ```
 
 ブラウザのコンソールを確認:
-1. F12キーを押す
-2. Consoleタブを開く
+
+1. F12 キーを押す
+2. Console タブを開く
 3. エラーメッセージを確認
 
 ### ファイアウォール設定
@@ -269,92 +293,97 @@ sudo firewall-cmd --permanent --add-port=3002/tcp
 sudo firewall-cmd --reload
 ```
 
-## ファイル構成
+---
+
+## 📂 ファイル構成
 
 ```
 webssh-console/
 ├── package.json           # プロジェクト設定
 ├── server.js             # メインサーバーコード
-├── start.sh              # localhost.run起動スクリプト
+├── start.sh              # localhost.run 起動スクリプト
 ├── public/
-│   └── index.html        # フロントエンドUI
+│   └── index.html        # フロントエンド UI
 └── README.md             # このファイル
 ```
 
-## 技術スタック
+---
+
+## 🧱 技術スタック
 
 ### バックエンド
-* **Express** - Webサーバーフレームワーク
-* **ws** - WebSocket実装
-* **ssh2** - SSH2プロトコルクライアント
+
+* **Express** - Web サーバーフレームワーク
+* **ws** - WebSocket 実装
+* **ssh2** - SSH2 プロトコルクライアント
 * **multer** - マルチパートフォーム処理
 
 ### フロントエンド
+
 * **xterm.js** - ターミナルエミュレーター
 * **WebSocket API** - リアルタイム通信
 * **Vanilla JavaScript** - 依存関係なし
 
-## セキュリティ注意事項
+---
+
+## 🧭 拡張アイデア
+
+このアプリケーションは以下に拡張可能です:
+
+* **SSH 鍵認証対応** - パスワード認証に加えて鍵認証をサポート
+* **マルチセッション管理** - タブ形式で複数 SSH 接続を管理
+* **ファイルマネージャー** - GUI 形式のファイル操作
+* **コマンド履歴保存** - データベースにコマンド履歴を保存
+* **ユーザー管理** - 複数ユーザーの権限管理
+* **SFTP 統合** - ドラッグ&ドロップでファイル転送
+* **録画機能** - セッションの録画・再生
+* **共同作業** - 複数ユーザーで同じセッションを共有
+
+---
+
+## 🔒 セキュリティ注意事項
 
 ⚠️ **重要な注意事項**
 
 * パスワードは平文でネットワーク経由で送信されます
-* 本番環境では必ずHTTPS/WSSを使用してください
+* 本番環境では必ず HTTPS/WSS を使用してください
 * 認証機能の追加を強く推奨します
 * 信頼できないネットワークでの使用は避けてください
 * ファイアウォールで適切なアクセス制限を設定してください
 
 ### 推奨される本番設定
 
-1. **HTTPS/WSS必須** - Let's Encryptで無料SSL証明書を取得
-2. **認証レイヤー追加** - Basic認証またはOAuth2.0
-3. **IP制限** - 特定のIPアドレスからのみアクセス許可
-4. **監査ログ** - すべてのSSH接続を記録
+1. **HTTPS/WSS 必須** - Let's Encrypt で無料 SSL 証明書を取得
+2. **認証レイヤー追加** - Basic 認証または OAuth2.0
+3. **IP 制限** - 特定の IP アドレスからのみアクセス許可
+4. **監査ログ** - すべての SSH 接続を記録
 5. **セッションタイムアウト** - 一定時間後に自動切断
-
-## 拡張アイデア
-
-このアプリケーションは以下に拡張可能です:
-
-* **SSH鍵認証対応** - パスワード認証に加えて鍵認証をサポート
-* **マルチセッション管理** - タブ形式で複数SSH接続を管理
-* **ファイルマネージャー** - GUI形式のファイル操作
-* **コマンド履歴保存** - データベースにコマンド履歴を保存
-* **ユーザー管理** - 複数ユーザーの権限管理
-* **SFTP統合** - ドラッグ&ドロップでファイル転送
-* **録画機能** - セッションの録画・再生
-* **共同作業** - 複数ユーザーで同じセッションを共有
-
-## 参考資料
-
-* xterm.js公式ドキュメント: https://xtermjs.org/
-* ssh2ライブラリ: https://github.com/mscdex/ssh2
-* WebSocket API: https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
-* localhost.run: https://localhost.run/
-
-## 開発支援
-
-このプロジェクトが役立った場合、継続的な開発を支援することをご検討ください:
-
-**Bitcoin (BTC):**
-```
-151feG2x2pUqG97p9kSKL7E3LgpukNWozT
-```
-
-すべての寄付は、無料で利用可能な開発ツールの維持と改善に役立ちます。
 
 ---
 
-## 教育理念
+## 📚 参考資料
+
+* xterm.js 公式ドキュメント: https://xtermjs.org/
+* ssh2 ライブラリ: https://github.com/mscdex/ssh2
+* WebSocket API: https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
+* localhost.run: https://localhost.run/
+
+---
+
+## 🌐 教育理念
 
 本プロジェクトは、すべてのユーザーが無料で利用できる高品質なツールの提供に取り組んでいます。すべての機能は無料で提供され、今後も無料で利用可能です。
 
 ---
 
-## 免責事項
+## ⚠️ 免責事項
 
 本ソフトウェアは教育目的で提供されています。ユーザーは、使用が適用される法律および規制に準拠していることを確保する責任を負います。
 
 ---
 
+<div align="center">
+
 *責任を持って使用してください*
+
+</div>
